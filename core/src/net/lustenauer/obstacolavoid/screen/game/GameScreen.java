@@ -1,4 +1,4 @@
-package net.lustenauer.obstacolavoid.screen;
+package net.lustenauer.obstacolavoid.screen.game;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -25,13 +25,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-
-        assetManager.load(AssetDescriptors.FONT);
-        assetManager.load(AssetDescriptors.BACKGROUND);
-        assetManager.load(AssetDescriptors.OBSTACLE);
-        assetManager.load(AssetDescriptors.PLAYER);
-
-        assetManager.finishLoading();
 
         controller = new GameController();
         renderer = new GameRenderer(assetManager, controller);

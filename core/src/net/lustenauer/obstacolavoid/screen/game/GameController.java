@@ -1,4 +1,4 @@
-package net.lustenauer.obstacolavoid.screen;
+package net.lustenauer.obstacolavoid.screen.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
