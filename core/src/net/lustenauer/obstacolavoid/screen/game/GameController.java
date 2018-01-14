@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import net.lustenauer.obstacolavoid.common.GameManager;
 import net.lustenauer.obstacolavoid.config.DifficultyLevel;
 import net.lustenauer.obstacolavoid.config.GameConfig;
 import net.lustenauer.obstacolavoid.entity.Background;
@@ -31,7 +32,6 @@ public class GameController {
     private int lives = GameConfig.LIVES_START;
     private int score;
     private int displayScore;
-    private DifficultyLevel difficultyLevel = DifficultyLevel.EASY;
     private Pool<Obstacle> obstaclePool;
     private final float startPlayerX = (GameConfig.WORLD_WIDTH - GameConfig.PLAYER_SIZE) / 2f;
     private final float startPlayerY = 1 - GameConfig.PLAYER_SIZE / 2f;
@@ -75,6 +75,7 @@ public class GameController {
 
             if (isGameOver()) {
                 log.debug("Game Over!!!");
+                GameManager.INSTANCE.updateHighScore(score);
             } else {
                 restart();
             }
@@ -178,6 +179,7 @@ public class GameController {
             float obstacleY = GameConfig.WORLD_HEIGHT;
 
             Obstacle obstacle = obstaclePool.obtain();
+            DifficultyLevel difficultyLevel = GameManager.INSTANCE.getDifficultyLevel();
             obstacle.setYSpeed(difficultyLevel.getObstacleSpeed());
             obstacle.setPosition(obstacleX, obstacleY);
 

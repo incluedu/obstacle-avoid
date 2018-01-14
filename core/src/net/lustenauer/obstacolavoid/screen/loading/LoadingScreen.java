@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import net.lustenauer.obstacolavoid.ObstacleAvoidGame;
 import net.lustenauer.obstacolavoid.assets.AssetDescriptors;
 import net.lustenauer.obstacolavoid.config.GameConfig;
-import net.lustenauer.obstacolavoid.screen.game.GameScreen;
+import net.lustenauer.obstacolavoid.screen.menu.MenuScreen;
 import net.lustenauer.obstacolavoid.util.GdxUtils;
 
 /**
@@ -61,6 +61,7 @@ public class LoadingScreen extends ScreenAdapter {
 
         assetManager.load(AssetDescriptors.FONT);
         assetManager.load(AssetDescriptors.GAME_PLAY);
+        assetManager.load(AssetDescriptors.UI);
 
         //assetManager.finishLoading();
     }
@@ -79,7 +80,7 @@ public class LoadingScreen extends ScreenAdapter {
         renderer.end();
 
         if (changeScreen) {
-            game.setScreen(new GameScreen(game));
+            game.setScreen(new MenuScreen(game));
         }
     }
 

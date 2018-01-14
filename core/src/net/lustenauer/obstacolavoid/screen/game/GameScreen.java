@@ -4,6 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import net.lustenauer.obstacolavoid.ObstacleAvoidGame;
 import net.lustenauer.obstacolavoid.assets.AssetDescriptors;
+import net.lustenauer.obstacolavoid.screen.menu.MenuScreen;
 
 /**
  * Created by Patric Hollenstein on 07.01.18.
@@ -27,13 +28,17 @@ public class GameScreen implements Screen {
     public void show() {
 
         controller = new GameController();
-        renderer = new GameRenderer(assetManager, controller);
+        renderer = new GameRenderer(game.getBatch(), assetManager, controller);
     }
 
     @Override
     public void render(float delta) {
         controller.update(delta);
         renderer.render(delta);
+
+        if (controller.isGameOver()) {
+            game.setScreen(new MenuScreen(game));
+        }
     }
 
     @Override
