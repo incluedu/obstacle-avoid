@@ -27,6 +27,8 @@ public class RegionNames {
     public static final String PLAY = "play";
     public static final String PLAY_PRESSED = "playPressed";
 
+    // == uiskin.atlas ==
+
     private RegionNames() {
     }
 }

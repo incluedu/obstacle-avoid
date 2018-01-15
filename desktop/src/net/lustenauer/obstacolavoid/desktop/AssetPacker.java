@@ -30,6 +30,12 @@ public class AssetPacker {
                 "ui"
         );
 
+        TexturePacker.process(settings,
+                RAW_ASSETS_PATH + "/skin",
+                ASSETS_PATH + "/ui",
+                "uiskin"
+        );
+
 
     }
 }
