@@ -41,7 +41,7 @@
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
-    dfault: {
+    default: {
       down: button-down,
       up: button,
       checkboxOn: check-on,

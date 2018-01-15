@@ -5,10 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -28,8 +25,10 @@ import net.lustenauer.obstacolavoid.config.GameConfig;
 public class OptionsScreen extends MenuScreenBase {
     private static final Logger log = new Logger(OptionsScreen.class.getName(), Logger.DEBUG);
 
-    private Image checkMark;
-
+    private ButtonGroup<CheckBox> checkBoxGroup;
+    private CheckBox easy;
+    private CheckBox medium;
+    private CheckBox hard;
 
     public OptionsScreen(ObstacleAvoidGame game) {
         super(game);
@@ -40,66 +39,38 @@ public class OptionsScreen extends MenuScreenBase {
         table.defaults().pad(15f);
 
         TextureAtlas gamePlayAtlas = assetManager.get(AssetDescriptors.GAME_PLAY);
-        TextureAtlas uiAtlas = assetManager.get(AssetDescriptors.UI);
-        BitmapFont font = assetManager.get(AssetDescriptors.FONT);
-        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
-
-        TextureRegion backgroundRegion = gamePlayAtlas.findRegion(RegionNames.BACKGROUND);
-        Image background = new Image(backgroundRegion);
-
-
-        Label label = new Label("DIFFICULTY", labelStyle);
-        label.setPosition(GameConfig.HUD_WIDTH / 2, GameConfig.HUD_HEIGHT / 2 + 180, Align.center);
-
-        final ImageButton easy = createButton(uiAtlas, RegionNames.EASY);
-        easy.setPosition(GameConfig.HUD_WIDTH / 2, GameConfig.HUD_HEIGHT / 2 + 90, Align.center);
-        easy.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                checkMark.setY(easy.getY() + 25);
-                GameManager.INSTANCE.updateDifficultyLevel(DifficultyLevel.EASY);
-            }
-        });
-
-        final ImageButton medium = createButton(uiAtlas, RegionNames.MEDIUM);
-        medium.setPosition(GameConfig.HUD_WIDTH / 2, GameConfig.HUD_HEIGHT / 2, Align.center);
-        medium.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                checkMark.setY(medium.getY() + 25);
-                GameManager.INSTANCE.updateDifficultyLevel(DifficultyLevel.MEDIUM);
-            }
-        });
-
-        final ImageButton hard = createButton(uiAtlas, RegionNames.HARD);
-        hard.setPosition(GameConfig.HUD_WIDTH / 2, GameConfig.HUD_HEIGHT / 2 - 90, Align.center);
-        hard.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                checkMark.setY(hard.getY() + 25);
-                GameManager.INSTANCE.updateDifficultyLevel(DifficultyLevel.HARD);
-            }
-        });
-
-        TextureRegion checkMarkRegion = uiAtlas.findRegion(RegionNames.CHECK_MARK);
-        checkMark = new Image(new TextureRegionDrawable(checkMarkRegion));
-        checkMark.setPosition(medium.getX() + 50, medium.getY() + 40, Align.center);
-
+        Skin uiskin = assetManager.get(AssetDescriptors.UI_SKIN);
         DifficultyLevel difficultyLevel = GameManager.INSTANCE.getDifficultyLevel();
 
-        if (difficultyLevel.isEasy()) {
-            checkMark.setY(easy.getY() + 25);
-        } else if (difficultyLevel.isHard()) {
-            checkMark.setY(hard.getY() + 25);
-        }
+        TextureRegion backgroundRegion = gamePlayAtlas.findRegion(RegionNames.BACKGROUND);
+        table.setBackground(new TextureRegionDrawable(backgroundRegion));
 
-        ImageButton back = new ImageButton(
-                new TextureRegionDrawable(uiAtlas.findRegion(RegionNames.BACK)),
-                new TextureRegionDrawable(uiAtlas.findRegion(RegionNames.BACK_PRESSED))
+        // label
+        Label label = new Label("DIFFICULTY", uiskin);
 
-        );
-        back.setPosition(GameConfig.HUD_WIDTH / 2, GameConfig.HUD_HEIGHT / 2 - 180, Align.center);
-        back.addListener(new ChangeListener() {
+        // check boxes
+        ChangeListener listener = new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                difficultyChanged();
+            }
+        };
+
+        easy = new CheckBox(DifficultyLevel.EASY.name(), uiskin);
+        easy.addListener(listener);
+
+        medium = new CheckBox(DifficultyLevel.MEDIUM.name(), uiskin);
+        medium.addListener(listener);
+
+        hard = new CheckBox(DifficultyLevel.HARD.name(), uiskin);
+        hard.addListener(listener);
+
+        checkBoxGroup = new ButtonGroup<CheckBox>(easy, medium, hard);
+        checkBoxGroup.setChecked(difficultyLevel.name());
+
+        // back button
+        TextButton backButton = new TextButton("BACK", uiskin);
+        backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 back();
@@ -107,25 +78,46 @@ public class OptionsScreen extends MenuScreenBase {
         });
 
 
-        table.addActor(background);
-        table.addActor(label);
-        table.addActor(easy);
-        table.addActor(medium);
-        table.addActor(hard);
-        table.addActor(checkMark);
-        table.addActor(back);
+        // setup tables
+        Table contentTable = new Table(uiskin);
+        contentTable.defaults().pad(10f);
+        contentTable.setBackground(RegionNames.PANEL);
+
+        contentTable.add(label).row();
+        contentTable.add(easy).row();
+        contentTable.add(medium).row();
+        contentTable.add(hard).row();
+        contentTable.add(backButton);
+
+        table.add(contentTable);
+        table.center();
+        table.setFillParent(true);
+        table.pack();
 
         return table;
     }
+
 
     private void back() {
         log.debug("back");
         game.setScreen(new MenuScreen(game));
     }
 
-    private static ImageButton createButton(TextureAtlas atlas, String regionName) {
-        TextureRegion region = atlas.findRegion(regionName);
-        return new ImageButton(new TextureRegionDrawable(region));
+    private void difficultyChanged() {
+        log.debug("difficultyChanged");
+
+        CheckBox checked = checkBoxGroup.getChecked();
+
+        if (checked == easy) {
+            log.debug("easy");
+            GameManager.INSTANCE.updateDifficultyLevel(DifficultyLevel.EASY);
+        } else if (checked == hard) {
+            log.debug("hard");
+            GameManager.INSTANCE.updateDifficultyLevel(DifficultyLevel.HARD);
+        } else {
+            log.debug("medium");
+            GameManager.INSTANCE.updateDifficultyLevel(DifficultyLevel.MEDIUM);
+        }
     }
 
 }
