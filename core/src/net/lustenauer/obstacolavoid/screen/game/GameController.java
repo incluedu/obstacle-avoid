@@ -2,11 +2,15 @@ package net.lustenauer.obstacolavoid.screen.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import net.lustenauer.obstacolavoid.ObstacleAvoidGame;
+import net.lustenauer.obstacolavoid.assets.AssetDescriptors;
 import net.lustenauer.obstacolavoid.common.GameManager;
 import net.lustenauer.obstacolavoid.config.DifficultyLevel;
 import net.lustenauer.obstacolavoid.config.GameConfig;
@@ -33,13 +37,19 @@ public class GameController {
     private int score;
     private int displayScore;
     private Pool<Obstacle> obstaclePool;
+    private Sound hitSound;
+
     private final float startPlayerX = (GameConfig.WORLD_WIDTH - GameConfig.PLAYER_SIZE) / 2f;
     private final float startPlayerY = 1 - GameConfig.PLAYER_SIZE / 2f;
+    private final ObstacleAvoidGame game;
+    private final AssetManager assetManager;
 
     // == constructors ==
 
 
-    public GameController() {
+    public GameController(ObstacleAvoidGame game) {
+        this.game = game;
+        this.assetManager = game.getAssetManager();
         init();
     }
 
@@ -56,6 +66,8 @@ public class GameController {
         background = new Background();
         background.setPosition(0f, 0f);
         background.setSize(GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
+
+        hitSound = assetManager.get(AssetDescriptors.HIT_SOUND);
     }
 
     // == public methodes ==
@@ -117,6 +129,7 @@ public class GameController {
     private boolean isPlayerCollidingWithObstacle() {
         for (Obstacle obstacle : obstacles) {
             if (obstacle.isNotHit() && obstacle.isPlayerColliding(player)) {
+                hitSound.play();
                 return true;
             }
         }
