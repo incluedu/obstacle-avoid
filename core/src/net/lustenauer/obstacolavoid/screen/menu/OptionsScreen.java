@@ -56,13 +56,13 @@ public class OptionsScreen extends MenuScreenBase {
             }
         };
 
-        easy = new CheckBox(DifficultyLevel.EASY.name(), uiskin);
+        easy = checkBox(DifficultyLevel.EASY.name(), uiskin);
         easy.addListener(listener);
 
-        medium = new CheckBox(DifficultyLevel.MEDIUM.name(), uiskin);
+        medium = checkBox(DifficultyLevel.MEDIUM.name(), uiskin);
         medium.addListener(listener);
 
-        hard = new CheckBox(DifficultyLevel.HARD.name(), uiskin);
+        hard = checkBox(DifficultyLevel.HARD.name(), uiskin);
         hard.addListener(listener);
 
         checkBoxGroup = new ButtonGroup<CheckBox>(easy, medium, hard);
@@ -118,6 +118,14 @@ public class OptionsScreen extends MenuScreenBase {
             log.debug("medium");
             GameManager.INSTANCE.updateDifficultyLevel(DifficultyLevel.MEDIUM);
         }
+    }
+
+    private static CheckBox checkBox(String text, Skin skin) {
+        CheckBox checkBox = new CheckBox(text, skin);
+        checkBox.left();
+        checkBox.pad(8f);
+        checkBox.getLabelCell().pad(8f);
+        return checkBox;
     }
 
 }

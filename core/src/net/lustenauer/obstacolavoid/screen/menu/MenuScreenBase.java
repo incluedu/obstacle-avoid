@@ -30,7 +30,7 @@ public abstract class MenuScreenBase extends ScreenAdapter{
     protected final AssetManager assetManager;
 
     private Viewport viewport;
-    private Stage table;
+    private Stage stage;
 
     /*
      * CONSTRUCTORS
@@ -47,11 +47,12 @@ public abstract class MenuScreenBase extends ScreenAdapter{
     @Override
     public void show() {
         viewport = new FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT);
-        table = new Stage(viewport, game.getBatch());
+        stage = new Stage(viewport, game.getBatch());
+        //stage.setDebugAll(true);
 
-        Gdx.input.setInputProcessor(table);
+        Gdx.input.setInputProcessor(stage);
 
-        table.addActor(createUi());
+        stage.addActor(createUi());
     }
 
     protected abstract Actor createUi();
@@ -65,8 +66,8 @@ public abstract class MenuScreenBase extends ScreenAdapter{
     public void render(float delta) {
         GdxUtils.clearScreen();
 
-        table.act();
-        table.draw();
+        stage.act();
+        stage.draw();
     }
 
     @Override
@@ -76,7 +77,7 @@ public abstract class MenuScreenBase extends ScreenAdapter{
 
     @Override
     public void dispose() {
-        table.dispose();
+        stage.dispose();
     }
 
 
